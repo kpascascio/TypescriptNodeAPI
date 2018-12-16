@@ -10,9 +10,10 @@ dotenv.config({ path: '.env' });
 import db from './db/models';
 
 import * as apiController from './controllers/api';
+import * as accountUserController from './controllers/accountUserController';
 
 // API keys and Passport configuration
-// import * as passportConfig from './config/passport';
+import * as passportConfig from './config/passport';
 
 db.sequelize.sync(
   // {force: true}
@@ -36,7 +37,10 @@ app.use(passport.initialize());
  * API examples routes.
  */
 app.get('/api', apiController.getApi);
-// app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
+app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
+app.post('/api/account/createuser', accountUserController.createUser);
+
+
 
 /**
  * OAuth authentication routes. (Sign in)

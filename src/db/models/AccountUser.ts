@@ -1,7 +1,7 @@
 import Sequelize, { DataTypeUUID } from 'sequelize';
 
-interface AccountUserAttributes {
-    uid: DataTypeUUID;
+export interface AccountUserAttributes {
+    uid?: DataTypeUUID;
     password: string;
     profilePicture?: string;
     accountVerified?: boolean;
@@ -12,13 +12,16 @@ interface AccountUserAttributes {
     firstName?: string;
     lastName?: string;
     userCity?: string;
+    token?: string;
     description?: string;
     createdAt?: string;
     updatedAt?: string;
+
+    error?: any;
 }
 
-type AccountUserInstance = Sequelize.Instance<AccountUserAttributes> & AccountUserAttributes;
-type AccountUserModel = Sequelize.Model<AccountUserInstance, AccountUserAttributes>;
+export type AccountUserInstance = Sequelize.Instance<AccountUserAttributes> & AccountUserAttributes;
+export type AccountUserModel = Sequelize.Model<AccountUserInstance, AccountUserAttributes>;
 
 export function initAccountUser(sequelize: Sequelize.Sequelize): AccountUserModel {
     const attributes: SequelizeAttributes<AccountUserAttributes> = {
@@ -32,11 +35,60 @@ export function initAccountUser(sequelize: Sequelize.Sequelize): AccountUserMode
             type: Sequelize.STRING,
             allowNull: false
         },
+        profilePicture: {
+            type: Sequelize.ARRAY(Sequelize.STRING),
+            validate: {
+                max: 4
+            }
+        },
+        accountVerified: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false
+        },
         phoneNumber: {
             type: Sequelize.STRING,
             allowNull: false,
             unique: true
 
+        },
+        birthday: {
+            type: Sequelize.DATEONLY,
+            validate: {
+                isDate: true
+            }
+        },
+        gender: {
+            type: Sequelize.ENUM('MALE', 'FEMALE', 'N/A')
+        },
+        matchGender: {
+            type: Sequelize.ENUM('MALE', 'FEMALE', 'N/A')
+        },
+        firstName: {
+            type: Sequelize.STRING,
+            validate: {
+                min: 2,
+                max: 30
+            }
+        },
+        lastName: {
+            type: Sequelize.STRING,
+            validate: {
+                min: 2,
+                max: 35
+            }
+        },
+        userCity: {
+            type: Sequelize.STRING,
+            validate: {
+                min: 2,
+                max: 35
+            }
+        },
+        description: {
+            type: Sequelize.STRING(500),
+            validate: {
+                min: 2
+            }
         }
     };
     const options: Sequelize.DefineOptions<AccountUserInstance> = {
