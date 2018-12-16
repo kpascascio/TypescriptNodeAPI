@@ -9,7 +9,6 @@ import expressValidator from 'express-validator';
 dotenv.config({ path: '.env' });
 import db from './db/models';
 
-import * as apiController from './controllers/api';
 import * as accountUserController from './controllers/accountUserController';
 
 // API keys and Passport configuration
@@ -33,18 +32,8 @@ app.use(expressValidator());
 
 app.use(passport.initialize());
 
-/**
- * API examples routes.
- */
-app.get('/api', apiController.getApi);
-app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 app.post('/api/account/createuser', accountUserController.createUser);
 
-
-
-/**
- * OAuth authentication routes. (Sign in)
- */
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
   res.redirect(req.session.returnTo || '/');
