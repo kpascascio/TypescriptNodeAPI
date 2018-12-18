@@ -38,7 +38,7 @@ export const token = async (req: Request, res: Response, next: NextFunction) => 
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
-            res.status(200).send(user);
+            res.status(200).send(createToken({id: user.uid}));
         });
     })(req, res, next);
 };

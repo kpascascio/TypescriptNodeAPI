@@ -1,4 +1,5 @@
 import Sequelize, { DataTypeUUID } from 'sequelize';
+import { AccountUserSwipeModel } from './AccountUserSwipe';
 
 export interface AccountUserAttributes {
     uid?: DataTypeUUID;
@@ -96,6 +97,11 @@ export function initAccountUser(sequelize: Sequelize.Sequelize): AccountUserMode
     };
 
     const AccountUser = sequelize.define<AccountUserInstance, AccountUserAttributes>('account_user', attributes, options);
+
+    // reflect the associations also in the attributes interface
+    AccountUser.associate = ({ AccountUserSwipe }: { AccountUserSwipe: AccountUserSwipeModel }) => {
+        AccountUser.hasMany(AccountUserSwipe);
+    };
 
     return AccountUser;
 }
