@@ -10,7 +10,8 @@ const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
 
 passport.serializeUser<any, any>((user, done) => {
-  done(undefined, user.id);
+  console.log(user.uid);
+  done(undefined, user.uid);
 });
 
 passport.deserializeUser((id, done) => {
@@ -23,6 +24,7 @@ passport.use(new LocalStrategy(
   { usernameField: 'phoneNumber' },
   async (phoneNumber, password, done) => {
     try {
+      console.log('here');
       const user = await AccountUser.findOne({ where: { phoneNumber } });
 
       bcrypt.compare(password, user.password, async (err, res) => {
@@ -30,6 +32,7 @@ passport.use(new LocalStrategy(
         return await done(false, user);
       });
     } catch (e) {
+      // console.log('ergbelisgblsebrgljbh', e);
       // error logger;
     }
   })
@@ -132,3 +135,5 @@ export let isAuthorized = (req: Request, res: Response, next: NextFunction) => {
     res.redirect(`/auth/${provider}`);
   }
 };
+
+export const requireSignin = passport.authenticate('local');
