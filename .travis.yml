@@ -1,12 +1,27 @@
-
-{
-  "language": "node_js",
-  "node_js": "8",
-  "services": [
-    "mongodb"
-  ],
-  "script": [
-    "npm run build",
-    "npm run test"
-  ]
-}
+---
+language: node_js
+node_js: '8'
+services:
+  - postgresql
+script:
+  - npm run build
+  - npm run test
+  - nohup npm run start & 
+  - sleep 3
+  - npm run test
+cache:
+  directories: 
+    - node_modules
+install: 
+  - npm install 
+  - npm run build
+before_script:
+  - psql -c letswaitdb -U postgres
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+    - postgresql-10
+    - postgresql-client-10
+env: 
+  - PORT=3000
