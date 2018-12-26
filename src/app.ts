@@ -10,7 +10,7 @@ dotenv.config({ path: '.env' });
 import db from './db/models';
 
 import * as accountUserController from './controllers/accountUserController';
-
+import * as uploadController from './controllers/uploadController';
 // API keys and Passport configuration
 import * as passportConfig from './config/passport';
 import { errorMiddleware } from './middleware/error.middleware';
@@ -39,6 +39,7 @@ app.use(passport.session());
 
 app.post('/api/account/createuser', accountUserController.createUser);
 app.post('/api/token' , accountUserController.token);
+app.post('/api/imageupload', passportConfig.isAuthorized, uploadController.imageUpload);
 
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {

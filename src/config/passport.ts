@@ -1,6 +1,12 @@
 import passport from 'passport';
 import passportLocal from 'passport-local';
-import passportFacebook from 'passport-facebook';
+import passportFacebook, { StrategyOption } from 'passport-facebook';
+import {
+  Strategy as JwtStrategy,
+  ExtractJwt,
+  VerifiedCallback,
+  StrategyOptions
+} from 'passport-jwt';
 import _ from 'lodash';
 import db from '../db/models';
 const AccountUser = db.AccountUser;
@@ -37,6 +43,20 @@ passport.use(new LocalStrategy(
     }
   })
 );
+
+const jwtOptions: StrategyOptions = {
+  secretOrKey: process.env.JWT_SECRET,
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+};
+
+passport.use(new JwtStrategy(jwtOptions, async (payload: any, done: VerifiedCallback) => {
+  const user = await AccountUser.findById(payload.id);
+
+  // TODO handle is error
+  if (!user) { return done(true, undefined, 'error was thrown'); }
+
+  return done(false, user);
+}));
 
 /**
  * OAuth Strategy Overview
@@ -126,14 +146,7 @@ export let isAuthenticated = (req: Request, res: Response, next: NextFunction) =
 /**
  * Authorization Required middleware.
  */
-export let isAuthorized = (req: Request, res: Response, next: NextFunction) => {
-  const provider = req.path.split('/').slice(-1)[0];
 
-  if (_.find(req.user.tokens, { kind: provider })) {
-    next();
-  } else {
-    res.redirect(`/auth/${provider}`);
-  }
-};
 
 export const requireSignin = passport.authenticate('local');
+export const isAuthorized = passport.authenticate('jwt');

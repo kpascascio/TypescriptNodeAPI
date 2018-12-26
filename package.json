@@ -49,10 +49,12 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "sequelize": "^4.42.0",
+    "uuid": "^3.3.2",
     "winston": "^2.4.0"
   },
   "devDependencies": {
     "@types/async": "^2.0.45",
+    "@types/aws-sdk": "^2.7.0",
     "@types/bcrypt-nodejs": "^0.0.30",
     "@types/bluebird": "^3.5.20",
     "@types/body-parser": "^1.16.8",
@@ -78,6 +80,7 @@
     "@types/sequelize": "^4.27.33",
     "@types/shelljs": "^0.7.8",
     "@types/supertest": "^2.0.4",
+    "@types/uuid": "^3.4.4",
     "@types/winston": "^2.3.7",
     "chai": "^4.1.2",
     "concurrently": "^3.5.1",
