@@ -1,9 +1,12 @@
 import Sequelize, { DataTypeUUID } from 'sequelize';
-import { AccountUserModel } from './AccountUser';
+import { AccountUserAttributes } from './AccountUser';
 
 export interface AccountUserSwipeAttributes {
     swipedUser: DataTypeUUID;
     hasDislikedUser: boolean;
+    hasLikedUser: boolean;
+
+    accountUserUid?: AccountUserAttributes;
 }
 
 export type AccountUserSwipeInstance = Sequelize.Instance<AccountUserSwipeAttributes> & AccountUserSwipeAttributes;
@@ -16,7 +19,12 @@ export function initAccountUserSwipe(sequelize: Sequelize.Sequelize): AccountUse
             allowNull: false
         },
         hasDislikedUser: {
-            type: Sequelize.BOOLEAN
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
+        hasLikedUser: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
         }
     };
 
@@ -25,6 +33,5 @@ export function initAccountUserSwipe(sequelize: Sequelize.Sequelize): AccountUse
     };
 
     const AccountUserSwipe = sequelize.define<AccountUserSwipeInstance, AccountUserSwipeAttributes>('account_user_swipes', attributes, options);
-
     return AccountUserSwipe;
 }

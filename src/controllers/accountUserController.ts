@@ -28,7 +28,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         });
 
     } catch (e) {
-        return next(new HttpExcetion(200, 'user not created'));
+        return next(new HttpExcetion(500, 'user not created'));
     }
 };
 
