@@ -1,13 +1,14 @@
 import { Response, Request, NextFunction } from 'express';
 import db from '../db/models';
 import { AccountUserAttributes, AccountUserModel, AccountUserInstance } from '../db/models/AccountUser';
-const AccountUser = db.AccountUser;
+const { AccountUser, AccountUserLocation } = db;
 import bcrypt from 'bcrypt-nodejs';
 import { createToken } from '../lib/helpers';
 import HttpExcetion from '../exceptions/httpException';
 import passport = require('passport');
 import { IVerifyOptions } from 'passport-local';
 import '../config/passport';
+import { AccountUserLocationAttributes } from '../db/models/AccountUserLocation';
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -38,7 +39,22 @@ export const token = async (req: Request, res: Response, next: NextFunction) => 
 
         req.logIn(user, (err) => {
             if (err) { return next(err); }
-            res.status(200).send({token: createToken({id: user.uid}), date: Date.now()});
+            res.status(200).send({ token: createToken({ id: user.uid }), date: Date.now() });
         });
     })(req, res, next);
+};
+
+export const addUserLocation = async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.user.uid;
+    const locationFromRequest: AccountUserLocationAttributes = req.body;
+
+    try {
+        const createdUserLocation = await AccountUserLocation.create(locationFromRequest, { include: [AccountUser] });
+
+        if (!createdUserLocation) { next(new HttpExcetion(500, 'something went slightly wrong')); }
+
+        res.status(201).send({ msg: 'ok' });
+    } catch (e) {
+        return next(new HttpExcetion(500, 'something went wrong'));
+    }
 };
