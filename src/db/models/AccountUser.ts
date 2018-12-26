@@ -93,7 +93,13 @@ export function initAccountUser(sequelize: Sequelize.Sequelize): AccountUserMode
         }
     };
     const options: Sequelize.DefineOptions<AccountUserInstance> = {
-        paranoid: true
+        paranoid: true,
+        indexes: [
+            {
+                unique: true,
+                fields: ['uid', 'phoneNumber']
+            }
+        ]
     };
 
     const AccountUser = sequelize.define<AccountUserInstance, AccountUserAttributes>('account_user', attributes, options);
