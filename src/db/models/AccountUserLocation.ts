@@ -1,9 +1,13 @@
 import Sequelize, { DataTypeFloat } from 'sequelize';
 import { AccountUserModel, AccountUserInstance } from './AccountUser';
+import { getCityState } from '../../lib/helpers';
+
 export interface AccountUserLocationAttributes {
     id?: number;
     latitude?: DataTypeFloat;
     longitude?: DataTypeFloat;
+    city?: string;
+    state?: string;
     userUid?: Sequelize.DataTypeUUID;
 }
 
@@ -26,8 +30,17 @@ export function initAccountUserLocation(sequelize: Sequelize.Sequelize): Account
         longitude: {
             type: Sequelize.FLOAT,
             allowNull: true,
-            defaultValue: 86.1581,
+            defaultValue: -86.1581,
             validate: { min: -180, max: 180 }
+        },
+        city: {
+            type: Sequelize.STRING
+        },
+        state: {
+            type: Sequelize.STRING,
+            validate: {
+                max: 3
+            }
         },
         userUid: {
             type: Sequelize.UUID,
@@ -43,6 +56,14 @@ export function initAccountUserLocation(sequelize: Sequelize.Sequelize): Account
                     throw new Error('Require either both latitude and longitude or neither');
                 }
             }
+        },
+        hooks: {
+            beforeCreate: async (location, options) => {
+                console.log(location);
+                const { city, state } = await getCityState(location.latitude.toString(), location.longitude.toString());
+                location.set('city', city);
+                location.set('state', state);
+            }
         }
     };
 
@@ -51,6 +72,5 @@ export function initAccountUserLocation(sequelize: Sequelize.Sequelize): Account
     AccountUserLocation.associate = ({ AccountUser }: { AccountUser: AccountUserModel }) => {
         AccountUserLocation.belongsTo(AccountUser, { as: 'user' });
     };
-
     return AccountUserLocation;
 }

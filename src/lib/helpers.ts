@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-export function createToken (credentials: Object) {
+export function createToken(credentials: Object) {
     return jwt.sign(credentials, process.env.JWT_SECRET);
 }
 
@@ -27,4 +27,20 @@ export function createRandomString(strLength: number) {
     } else {
         return false;
     }
+}
+
+
+const googleMapsClient = require('@google/maps').createClient({
+    key: process.env.GOOGLE_MAPS_KEY,
+    Promise: Promise
+});
+
+export async function getCityState(latitude: string, longitude: string) {
+    // TODO Needs error handling in this method
+
+    const locationJSON = await googleMapsClient.reverseGeocode({ latlng: [latitude, longitude] }).asPromise();
+    return {
+        city: locationJSON.json.results[0].address_components[0].long_name,
+        state: locationJSON.json.results[0].address_components[1].short_name
+    };
 }

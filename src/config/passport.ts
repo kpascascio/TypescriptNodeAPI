@@ -50,7 +50,8 @@ const jwtOptions: StrategyOptions = {
 };
 
 passport.use(new JwtStrategy(jwtOptions, async (payload: any, done: VerifiedCallback) => {
-  const user = await AccountUser.findById(payload.id);
+
+  const user = await AccountUser.findOne({ where: { phoneNumber: payload.id } });
 
   // TODO handle is error
   if (!user) { return done(true, undefined, 'error was thrown'); }

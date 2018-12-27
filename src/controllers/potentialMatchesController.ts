@@ -6,19 +6,18 @@ const { AccountUser, AccountUserLocation } = db;
 export const findUsersInRadius = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-        const user = await AccountUser.findById(req.user.uid);
-        const userLocations = await user.getLocations();
-        if (!userLocations) { return next(new HttpExcetion(500, 'nope nope nope')); }
+        const userLocation = await AccountUserLocation.findOne({ where: { userUid: req.user.uid } });
+        if (!userLocation) { return next(new HttpExcetion(500, 'nope nope nope')); }
 
-        console.log('user location', userLocations);
-
+        // console.log(userLocation.longitude, userLocation.latitude);
         // TODO: finish this logic
-        res.send(userLocations);
+        res.send(userLocation);
     } catch (e) {
         next(new HttpExcetion(500, e));
     }
 };
 
+// TODO Refactor alert!
 export const getAllUserLocations = async (req: Request, res: Response, next: NextFunction) => {
     const locations = await AccountUserLocation.findAll();
     res.send(locations);

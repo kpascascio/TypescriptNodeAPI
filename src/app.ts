@@ -47,6 +47,7 @@ app.post('/api/imageupload', passportConfig.isAuthorized, uploadController.image
 // TODO: add radius as a query
 // TODO: add user id url param (for admin specific purposes)
 app.get('/api/findmatches', passportConfig.isAuthorized, findMatchesController.findUsersInRadius);
+// TODO: create a patch for city and state for accountUserLocation.
 app.get('/api/getalllocations', findMatchesController.getAllUserLocations);
 
 
