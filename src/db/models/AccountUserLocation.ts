@@ -1,26 +1,37 @@
 import Sequelize, { DataTypeFloat } from 'sequelize';
-import { AccountUserModel } from './AccountUser';
+import { AccountUserModel, AccountUserInstance } from './AccountUser';
 export interface AccountUserLocationAttributes {
-    latitude: DataTypeFloat;
-    longitude: DataTypeFloat;
+    id?: number;
+    latitude?: DataTypeFloat;
+    longitude?: DataTypeFloat;
+    userUid?: Sequelize.DataTypeUUID;
 }
 
-export type AccountUserLocationInstance = Sequelize.Instance<AccountUserLocationAttributes> & AccountUserLocationAttributes;
+export interface AccountUserLocationInstance extends Sequelize.Instance<AccountUserLocationAttributes>, AccountUserLocationAttributes {
+    getUser: Sequelize.BelongsToGetAssociationMixin<AccountUserInstance>;
+    setUser: Sequelize.BelongsToSetAssociationMixin<AccountUserInstance, AccountUserInstance['uid']>;
+    createUser: Sequelize.BelongsToCreateAssociationMixin<AccountUserLocationAttributes, AccountUserInstance>;
+}
+
 export type AccountUserLocationModel = Sequelize.Model<AccountUserLocationInstance, AccountUserLocationAttributes>;
 
 export function initAccountUserLocation(sequelize: Sequelize.Sequelize): AccountUserLocationModel {
     const attributes: SequelizeAttributes<AccountUserLocationAttributes> = {
         latitude: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.FLOAT,
             allowNull: true,
             defaultValue: 39.7684,
             validate: { min: -90, max: 90 }
         },
         longitude: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.FLOAT,
             allowNull: true,
             defaultValue: 86.1581,
             validate: { min: -180, max: 180 }
+        },
+        userUid: {
+            type: Sequelize.UUID,
+            allowNull: false
         }
     };
 
@@ -38,7 +49,7 @@ export function initAccountUserLocation(sequelize: Sequelize.Sequelize): Account
     const AccountUserLocation = sequelize.define<AccountUserLocationInstance, AccountUserLocationAttributes>('account_user_location', attributes, options);
 
     AccountUserLocation.associate = ({ AccountUser }: { AccountUser: AccountUserModel }) => {
-        AccountUserLocation.belongsTo(AccountUser);
+        AccountUserLocation.belongsTo(AccountUser, { as: 'user' });
     };
 
     return AccountUserLocation;

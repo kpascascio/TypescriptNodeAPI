@@ -1,5 +1,8 @@
 import Sequelize, { DataTypeUUID } from 'sequelize';
 import { AccountUserSwipeModel } from './AccountUserSwipe';
+import { AccountUserLocationModel, AccountUserLocationInstance, AccountUserLocationAttributes, initAccountUserLocation } from './AccountUserLocation';
+import { AnyLengthString } from 'aws-sdk/clients/comprehend';
+import db from '.';
 
 export interface AccountUserAttributes {
     uid?: DataTypeUUID;
@@ -21,7 +24,12 @@ export interface AccountUserAttributes {
     error?: any;
 }
 
-export type AccountUserInstance = Sequelize.Instance<AccountUserAttributes> & AccountUserAttributes;
+// export type AccountUserInstance = Sequelize.Instance<AccountUserAttributes> & AccountUserAttributes;
+export interface AccountUserInstance extends Sequelize.Instance<AccountUserAttributes>, AccountUserAttributes {
+    getLocations: Sequelize.BelongsToGetAssociationMixin<AccountUserLocationInstance>;
+    setLocation: Sequelize.BelongsToSetAssociationMixin<AccountUserLocationInstance, AccountUserLocationInstance['id']>;
+    createLocation: Sequelize.BelongsToCreateAssociationMixin<AccountUserLocationAttributes, AccountUserLocationInstance>;
+}
 export type AccountUserModel = Sequelize.Model<AccountUserInstance, AccountUserAttributes>;
 
 export function initAccountUser(sequelize: Sequelize.Sequelize): AccountUserModel {
@@ -99,14 +107,19 @@ export function initAccountUser(sequelize: Sequelize.Sequelize): AccountUserMode
                 unique: true,
                 fields: ['uid', 'phoneNumber']
             }
-        ]
+        ],
+        hooks: {
+            afterCreate: (accountUser, options) => {
+                db.AccountUserLocation.create({ userUid: accountUser.uid });
+            }
+        }
     };
 
     const AccountUser = sequelize.define<AccountUserInstance, AccountUserAttributes>('account_user', attributes, options);
 
     // reflect the associations also in the attributes interface
     AccountUser.associate = ({ AccountUserSwipe }: { AccountUserSwipe: AccountUserSwipeModel }) => {
-        AccountUser.hasMany(AccountUserSwipe);
+        AccountUser.hasMany(AccountUserSwipe, { as: 'swipes' });
     };
 
     return AccountUser;

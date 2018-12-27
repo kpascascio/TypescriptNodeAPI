@@ -12,6 +12,7 @@ import db from './db/models';
 import * as accountUserController from './controllers/accountUserController';
 import * as uploadController from './controllers/uploadController';
 import * as accountSwipeController from './controllers/accountUserSwipeController';
+import * as findMatchesController from './controllers/potentialMatchesController';
 
 // API keys and Passport configuration
 import * as passportConfig from './config/passport';
@@ -42,6 +43,12 @@ app.use(passport.session());
 app.post('/api/account/createuser', accountUserController.createUser);
 app.post('/api/token', accountUserController.token);
 app.post('/api/imageupload', passportConfig.isAuthorized, uploadController.imageUpload);
+
+// TODO: add radius as a query
+// TODO: add user id url param (for admin specific purposes)
+app.get('/api/findmatches', passportConfig.isAuthorized, findMatchesController.findUsersInRadius);
+app.get('/api/getalllocations', findMatchesController.getAllUserLocations);
+
 
 app.post('/api/userswipe', passportConfig.isAuthorized, accountSwipeController.userSwipeAction);
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
