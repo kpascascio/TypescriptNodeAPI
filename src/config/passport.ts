@@ -16,7 +16,6 @@ const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
 
 passport.serializeUser<any, any>((user, done) => {
-  console.log(user.uid);
   done(undefined, user.uid);
 });
 
@@ -30,7 +29,6 @@ passport.use(new LocalStrategy(
   { usernameField: 'phoneNumber' },
   async (phoneNumber, password, done) => {
     try {
-      console.log('here');
       const user = await AccountUser.findOne({ where: { phoneNumber } });
 
       bcrypt.compare(password, user.password, async (err, res) => {
@@ -38,7 +36,7 @@ passport.use(new LocalStrategy(
         return await done(false, user);
       });
     } catch (e) {
-      // console.log('ergbelisgblsebrgljbh', e);
+      console.log(e);
       // error logger;
     }
   })
@@ -51,8 +49,7 @@ const jwtOptions: StrategyOptions = {
 
 passport.use(new JwtStrategy(jwtOptions, async (payload: any, done: VerifiedCallback) => {
 
-  const user = await AccountUser.findOne({ where: { phoneNumber: payload.id } });
-
+  const user = await AccountUser.findOne({ where: { uid: payload.id } });
   // TODO handle is error
   if (!user) { return done(true, undefined, 'error was thrown'); }
 

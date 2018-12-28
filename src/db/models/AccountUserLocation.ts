@@ -9,6 +9,7 @@ export interface AccountUserLocationAttributes {
     city?: string;
     state?: string;
     userUid?: Sequelize.DataTypeUUID;
+    user?: AccountUserInstance;
 }
 
 export interface AccountUserLocationInstance extends Sequelize.Instance<AccountUserLocationAttributes>, AccountUserLocationAttributes {
