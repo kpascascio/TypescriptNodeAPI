@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import db from '../db/models';
 import { AccountUserSwipeAttributes } from '../db/models/AccountUserSwipe';
-import HttpException from '../exceptions/httpException';
+import HttpException from '../exceptions/HttpException';
 const { AccountUserSwipe, AccountUser } = db;
 
 export const userSwipeAction = async (req: Request, res: Response, next: NextFunction) => {

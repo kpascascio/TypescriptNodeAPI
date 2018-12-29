@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import db from '../db/models';
-import HttpException from '../exceptions/httpException';
+import HttpException from '../exceptions/HttpException';
 const { AccountUser, AccountUserLocation } = db;
 
 export const findUsersInRadius = async (req: Request, res: Response, next: NextFunction) => {

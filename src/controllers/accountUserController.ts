@@ -4,7 +4,7 @@ import { AccountUserAttributes, AccountUserInstance } from '../db/models/Account
 const { AccountUser, AccountUserLocation } = db;
 import bcrypt from 'bcrypt-nodejs';
 import { createToken } from '../lib/helpers';
-import HttpException from '../exceptions/httpException';
+import HttpException from '../exceptions/HttpException';
 import passport = require('passport');
 import { IVerifyOptions } from 'passport-local';
 import '../config/passport';
