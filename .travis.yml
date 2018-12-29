@@ -16,7 +16,7 @@ install:
   - npm install 
   - npm run build
 before_script:
-  - psql -U postgres -c letswaitdb 
+  - psql -U postgres -c 'create database myapp_test;' 
 env: 
   - PORT=3000
 dist: trusty
