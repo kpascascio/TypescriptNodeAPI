@@ -1,4 +1,6 @@
 'use strict';
+import dotenv from 'dotenv';
+dotenv.config();
 import Sequelize from 'sequelize';
 import { dbConfigOptions } from '../config';
 import { initAccountUser } from './AccountUser';
