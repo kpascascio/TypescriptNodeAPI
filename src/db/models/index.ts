@@ -9,11 +9,11 @@ const config = dbConfigOptions.development;
 const sequelize = new Sequelize(config.url || process.env.DATABSE_URL, config);
 
 const db = {
-  sequelize,
-  Sequelize,
-  AccountUser: initAccountUser(sequelize),
-  AccountUserSwipe: initAccountUserSwipe(sequelize),
-  AccountUserLocation: initAccountUserLocation(sequelize)
+  'sequelize': sequelize,
+  'Sequelize': Sequelize,
+  'AccountUser': initAccountUser(sequelize),
+  'AccountUserSwipe': initAccountUserSwipe(sequelize),
+  'AccountUserLocation': initAccountUserLocation(sequelize)
 };
 
 Object.values(db).forEach((model: any) => {
