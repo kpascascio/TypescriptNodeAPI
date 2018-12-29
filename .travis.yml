@@ -16,12 +16,7 @@ install:
   - npm install 
   - npm run build
 before_script:
-  - psql -c letswaitdb -U postgres
-addons:
-  postgresql: "10"
-  apt:
-    packages:
-    - postgresql-10
-    - postgresql-client-10
+  - psql -U postgres -c letswaitdb 
 env: 
   - PORT=3000
+dist: trusty
