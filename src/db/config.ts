@@ -7,10 +7,7 @@ export const dbConfigOptions = {
         'dialect': 'postgres'
       },
       'test': {
-        'username': 'root',
-        'password': 'undefined',
-        'database': 'database_test',
-        'host': '127.0.0.1',
+        'url': process.env.CIDBURI,
         'dialect': 'postgres'
       },
       'production': {

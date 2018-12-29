@@ -17,6 +17,9 @@ install:
   - npm run build
 before_script:
   - psql -U postgres -c 'create database myapp_test;' 
+  - psql -c "CREATE USER lets WITH PASSWORD 'wait';" -U postgres
 env: 
   - PORT=3000
+  - DATABASE_URL=postgres://lets:wait/myapp_test
+  - NODE_ENV=test
 dist: trusty

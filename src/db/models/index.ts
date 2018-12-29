@@ -6,7 +6,7 @@ import { initAccountUserSwipe } from './AccountUserSwipe';
 import { initAccountUserLocation } from './AccountUserLocation';
 
 const config = dbConfigOptions.development;
-const sequelize = new Sequelize(config.url || process.env.DATABSE_URL, config);
+const sequelize = new Sequelize(process.env.DATABSE_URL || config.url, config);
 
 const db = {
   'sequelize': sequelize,
