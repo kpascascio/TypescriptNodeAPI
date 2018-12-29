@@ -8,7 +8,7 @@ import { initAccountUserSwipe } from './AccountUserSwipe';
 import { initAccountUserLocation } from './AccountUserLocation';
 
 const config = dbConfigOptions.development;
-const sequelize = new Sequelize('postgres://lets:wait/myapp_test' || config.url, config);
+const sequelize = new Sequelize(process.env.DATABSE_URL || config.url, config);
 
 const db = {
   'sequelize': sequelize,
