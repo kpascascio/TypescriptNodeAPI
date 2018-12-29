@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 export function createToken(credentials: Object) {
     return jwt.sign(credentials, process.env.JWT_SECRET);
 }
-
 interface ErrorObject {
     message: string;
 }

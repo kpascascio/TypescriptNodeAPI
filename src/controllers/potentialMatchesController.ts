@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import db from '../db/models';
-import HttpExcetion from '../exceptions/httpException';
+import HttpException from '../exceptions/httpException';
 const { AccountUser, AccountUserLocation } = db;
 
 export const findUsersInRadius = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
         const userLocation = await AccountUserLocation.findOne({ where: { userUid: req.user.uid } });
-        if (!userLocation) { return next(new HttpExcetion(500, 'nope nope nope')); }
+        if (!userLocation) { return next(new HttpException(500, 'nope nope nope')); }
 
         const similarUsersWithLocation = await AccountUserLocation.findAndCountAll({
             where: { city: userLocation.city, state: userLocation.state },
@@ -16,10 +16,10 @@ export const findUsersInRadius = async (req: Request, res: Response, next: NextF
 
         // TODO: check for the case if the user is matching their own gender.
         const matchedGenderUsersArray = similarUsersWithLocation.rows.filter(locationRecord => locationRecord.user.matchGender == req.user.matchGender);
-
+        // TODO: Needs more error checking
         res.send({rows: matchedGenderUsersArray, count: matchedGenderUsersArray.length});
     } catch (e) {
-        next(new HttpExcetion(500, e));
+        next(new HttpException(500, e));
     }
 };
 

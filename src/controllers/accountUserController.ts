@@ -1,10 +1,10 @@
 import { Response, Request, NextFunction } from 'express';
 import db from '../db/models';
-import { AccountUserAttributes, AccountUserModel, AccountUserInstance } from '../db/models/AccountUser';
+import { AccountUserAttributes, AccountUserInstance } from '../db/models/AccountUser';
 const { AccountUser, AccountUserLocation } = db;
 import bcrypt from 'bcrypt-nodejs';
 import { createToken } from '../lib/helpers';
-import HttpExcetion from '../exceptions/httpException';
+import HttpException from '../exceptions/httpException';
 import passport = require('passport');
 import { IVerifyOptions } from 'passport-local';
 import '../config/passport';
@@ -17,7 +17,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         const createdUser = await AccountUser.create(userObj);
         createdUser.token = createToken({ id: createdUser.phoneNumber });
 
-        if (createdUser.error) { next(new HttpExcetion(500, 'user not created')); }
+        if (createdUser.error) { next(new HttpException(500, 'user not created')); }
 
         const { accountVerified, token, phoneNumber } = createdUser;
         res.status(200).send({
@@ -29,7 +29,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         });
 
     } catch (e) {
-        return next(new HttpExcetion(500, 'user not created'));
+        return next(new HttpException(500, 'user not created'));
     }
 };
 
@@ -51,10 +51,10 @@ export const addUserLocation = async (req: Request, res: Response, next: NextFun
     try {
         const createdUserLocation = await AccountUserLocation.create(locationFromRequest, { include: [AccountUser] });
 
-        if (!createdUserLocation) { next(new HttpExcetion(500, 'something went slightly wrong')); }
+        if (!createdUserLocation) { next(new HttpException(500, 'something went slightly wrong')); }
 
         res.status(201).send({ msg: 'ok' });
     } catch (e) {
-        return next(new HttpExcetion(500, 'something went wrong'));
+        return next(new HttpException(500, 'something went wrong'));
     }
 };
