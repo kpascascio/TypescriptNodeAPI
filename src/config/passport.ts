@@ -16,7 +16,10 @@ const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFacebook.Strategy;
 
 passport.serializeUser<any, any>((user, done) => {
-  done(undefined, user.uid);
+  if (!user.uid) {
+    return done(undefined, user.id);
+  }
+  return done(undefined, user.uid);
 });
 
 passport.deserializeUser((id, done) => {
@@ -57,31 +60,24 @@ passport.use(new JwtStrategy(jwtOptions, async (payload: any, done: VerifiedCall
 }));
 
 /**
- * OAuth Strategy Overview
- *
- * - User is already logged in.
- *   - Check if there is an existing account with a provider id.
- *     - If there is, return an error message. (Account merging not supported)
- *     - Else link new OAuth account with currently logged-in user.
- * - User is not logged in.
- *   - Check if it's a returning user.
- *     - If returning user, sign in and we are done.
- *     - Else check if there is an existing account with user's email.
- *       - If there is, return an error message.
- *       - Else create a new account.
- */
-
-/**
  * Sign in with Facebook.
  */
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_ID,
   clientSecret: process.env.FACEBOOK_SECRET,
   callbackURL: '/auth/facebook/callback',
-  profileFields: ['name', 'email', 'link', 'locale', 'timezone'],
+  profileFields: ['email', 'link', 'locale', 'timezone', 'first_name', 'gender', 'location', 'last_name', 'displayName'],
   passReqToCallback: true
-}, (req: any, accessToken, refreshToken, profile, done) => {
-  if (req.user) {
+}, async (req: any, accessToken, refreshToken, profile, done) => {
+  console.log({accessToken, refreshToken, profile});
+  console.log({user: req.user});
+  return done(false, profile);
+
+  // const findOrCreatedUser = await AccountUser.findOrCreate({where: { }});
+  // if (req.user) {
+
+    // look to see if the user has already signed up with their facebook account.
+
     // AccountUserfindOne({ facebook: profile.id }, (err: any, existingUser: any) => {
     //   if (err) { return done(err); }
     //   if (existingUser) {
@@ -102,7 +98,7 @@ passport.use(new FacebookStrategy({
     //     });
     //   }
     // });
-  } else {
+  // } else {
     // AccountUserfindOne({ facebook: profile.id }, (err: any, existingUser: any) => {
     //   if (err) { return done(err); }
     //   if (existingUser) {
@@ -128,23 +124,15 @@ passport.use(new FacebookStrategy({
     //     }
     //   });
     // });
-  }
+  // }
 }));
 
-/**
- * Login Required middleware.
- */
 export let isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
   if (req.isAuthenticated()) {
     return next();
   }
   res.redirect('/login');
 };
-
-/**
- * Authorization Required middleware.
- */
-
 
 export const requireSignin = passport.authenticate('local');
 export const isAuthorized = passport.authenticate('jwt');

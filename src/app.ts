@@ -57,4 +57,8 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRe
   res.redirect(req.session.returnTo || '/');
 });
 
+app.get('*/*', async (req, res) => {
+  res.status(404).send({ error: true, msg: 'invalid route' });
+});
+
 export default app;
